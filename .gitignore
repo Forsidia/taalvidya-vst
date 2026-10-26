@@ -1,0 +1,15 @@
+# build output
+build*/
+dist/
+
+# JUCE is fetched by build.bat (git clone --branch 8.0.8)
+libs/JUCE/
+
+# IDE / OS
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+Thumbs.db
+.DS_Store
