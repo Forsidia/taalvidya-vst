@@ -16,3 +16,6 @@ build.local.bat
 *.suo
 Thumbs.db
 .DS_Store
+
+# local assistant notes
+CLAUDE.md

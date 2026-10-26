@@ -73,7 +73,7 @@ To also copy the plugin into a VST folder after each build, set `TABLA_VST_DIR`,
 ## Project layout
 
 ```
-Source/      plugin code (see CLAUDE.md for a file-by-file guide)
+Source/      plugin code
 Samples/     tabla recordings, embedded into the plugin at build time
 libs/JUCE/   fetched by build.bat, not committed
 ```
