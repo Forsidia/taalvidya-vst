@@ -27,6 +27,51 @@ int Taal::indexAtBeat (double beat) const
     return -1;
 }
 
+namespace
+{
+    // Smallest denominator (<= 64) that reproduces `v` closely enough; false if none does.
+    bool asFraction (double v, int& n, int& d)
+    {
+        for (int den = 1; den <= 64; ++den)
+        {
+            const double x = v * den;
+            if (std::abs (v - std::round (x) / den) < 1.0e-3)
+            {
+                n = (int) std::round (x);
+                d = den;
+                return n > 0;
+            }
+        }
+        return false;
+    }
+}
+
+double Taal::snapDuration (double beats)
+{
+    int n = 0, d = 1;
+    return asFraction (beats, n, d) ? (double) n / (double) d : beats;
+}
+
+juce::String Taal::formatDuration (double beats)
+{
+    int n = 0, d = 1;
+    if (! asFraction (beats, n, d)) return juce::String (beats, 3);   // odd value: still readable
+    return d == 1 ? juce::String (n) : juce::String (n) + "/" + juce::String (d);
+}
+
+double Taal::parseDuration (const juce::String& text)
+{
+    const auto t = text.trim();
+    double v;
+    if (t.contains ("/"))
+    {
+        const double den = t.fromFirstOccurrenceOf ("/", false, false).getDoubleValue();
+        v = den != 0.0 ? t.upToFirstOccurrenceOf ("/", false, false).getDoubleValue() / den : 0.0;
+    }
+    else v = t.getDoubleValue();
+    return v > 0.0 ? snapDuration (v) : 0.0;
+}
+
 static juce::String num (double v)
 {
     auto s = juce::String (v, 4);
@@ -36,15 +81,18 @@ static juce::String num (double v)
 
 juce::String Taal::toText() const
 {
-    juce::StringArray parts;
+    juce::String out;
+    bool first = true;
     for (auto& e : events)
     {
         juce::String p = e.bol.equalsIgnoreCase ("Rest") ? juce::String ("-") : e.bol;
-        if (std::abs (e.duration - 1.0) > 1.0e-6) p << "[" << num (e.duration) << "]";
+        if (std::abs (e.duration - 1.0) > 1.0e-6) p << "[" << formatDuration (e.duration) << "]";
         if (std::abs (e.emphasisDb) > 1.0e-3f) p << "{" << (e.emphasisDb > 0 ? "+" : "") << num (e.emphasisDb) << "}";
-        parts.add (p);
+        if (! first) out << (e.breaksBefore > 0 ? "," + juce::String::repeatedString ("\n", e.breaksBefore) : juce::String (", "));
+        out << p;
+        first = false;
     }
-    return parts.joinIntoString (", ");
+    return out;
 }
 
 bool Taal::parseText (const juce::String& text, std::vector<BolEvent>& out, juce::String& error)
@@ -59,7 +107,8 @@ bool Taal::parseText (const juce::String& text, std::vector<BolEvent>& out, juce
 
     while (! t.isEmpty())
     {
-        while (! t.isEmpty() && isSep (*t)) ++t;
+        int newlines = 0;
+        while (! t.isEmpty() && isSep (*t)) { if (*t == '\n') ++newlines; ++t; }
         if (t.isEmpty()) break;
 
         juce::String name;
@@ -88,6 +137,7 @@ bool Taal::parseText (const juce::String& text, std::vector<BolEvent>& out, juce
                 dest = den != 0.0 ? n.upToFirstOccurrenceOf ("/", false, false).getDoubleValue() / den : 0.0;
             }
             else dest = n.getDoubleValue();
+            if (open == '[') dest = snapDuration (dest);   // 0.3333 typed -> exactly 1/3
             return true;
         };
 
@@ -96,6 +146,7 @@ bool Taal::parseText (const juce::String& text, std::vector<BolEvent>& out, juce
         if (! readGroup ('{', '}', db)) return false;
         if (dur <= 0.0 || dur > 64.0) { error = "Bad duration for " + ev.bol + " (use e.g. [0.25] or [1/4])"; return false; }
         ev.duration = dur;
+        ev.breaksBefore = out.empty() ? 0 : std::min (newlines, 4);
         ev.emphasisDb = (float) juce::jlimit (-24.0, 12.0, db);
         out.push_back (ev);
     }
@@ -114,6 +165,7 @@ juce::var Taal::toVar() const
         o->setProperty ("bol", e.bol);
         o->setProperty ("duration", e.duration);
         o->setProperty ("emphasisDb", e.emphasisDb);
+        if (e.breaksBefore > 0) o->setProperty ("breaksBefore", e.breaksBefore);
         arr.add (juce::var (o));
     }
     obj->setProperty ("bols", arr);
@@ -133,8 +185,9 @@ bool Taal::fromVar (const juce::var& v, Taal& out)
         auto n = b["bol"].toString();
         e.bol = n.equalsIgnoreCase ("Rest") ? juce::String ("Rest") : BolLibrary::canonicalName (n);
         if (e.bol.isEmpty()) continue;
-        e.duration = juce::jlimit (0.0625, 64.0, (double) b["duration"]);
+        e.duration = snapDuration (juce::jlimit (0.0625, 64.0, (double) b["duration"]));
         e.emphasisDb = (float) (double) b["emphasisDb"];
+        e.breaksBefore = juce::jlimit (0, 4, (int) b["breaksBefore"]);
         t.events.push_back (e);
     }
     out = std::move (t);

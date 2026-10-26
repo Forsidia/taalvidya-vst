@@ -1,0 +1,16 @@
+Copyright (c) 2026 Forsidia and Shreyak Chakraborty. All rights reserved.
+
+Taal Vidya - https://forsidia.in
+
+No part of this software may be copied, modified, distributed or used
+without prior written permission from the copyright holders, except as
+otherwise stated below.
+
+Third-party components
+----------------------
+- JUCE (https://juce.com) is licensed by Raw Material Software under the
+  AGPLv3 or a commercial licence. It is fetched at build time and is not
+  part of this repository. Anyone distributing a build of Taal Vidya must
+  comply with the JUCE licence terms that apply to them.
+- Tabla samples in Samples/ are by mmiron (Freesound), released under
+  Creative Commons 0. See Samples/LICENSE_mmiron_freesound.txt.

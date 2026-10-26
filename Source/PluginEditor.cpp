@@ -146,7 +146,12 @@ TablaEditor::TablaEditor (TablaProcessor& p)
     }
     styleSlider (durSlider, 0.01, 70);
     durSlider.setRange (0.0625, 32.0, 0.0625);
-    durSlider.setNumDecimalPlacesToDisplay (3);
+    durSlider.textFromValueFunction = [] (double v) { return Taal::formatDuration (v); };
+    durSlider.valueFromTextFunction = [] (const juce::String& t)
+    {
+        const double v = Taal::parseDuration (t);
+        return v > 0.0 ? v : 1.0;
+    };
     styleSlider (empSlider, 0.5, 70);
     empSlider.setRange (-12.0, 12.0, 0.5);
 
@@ -215,6 +220,7 @@ TablaEditor::TablaEditor (TablaProcessor& p)
         if (selectedBol < 0) return;
         auto& ev = working().events;
         ev.insert (ev.begin() + selectedBol + 1, ev[(size_t) selectedBol]);
+        ev[(size_t) selectedBol + 1].breaksBefore = 0;
         ++selectedBol;
         commit();
     };
@@ -240,11 +246,12 @@ TablaEditor::TablaEditor (TablaProcessor& p)
     addAndMakeVisible (applyButton);
     addAndMakeVisible (revertButton);
     textBox.setMultiLine (true, true);
-    textBox.setReturnKeyStartsNewLine (false);
+    textBox.setReturnKeyStartsNewLine (true);   // multi-line: lay larger compositions out by hand
+    textTitle.setFont (FontOptions (12.0f));
+    textTitle.setColour (Label::textColourId, Palette::dim);
     textBox.setFont (FontOptions ("Georgia", 18.0f, Font::plain));
-    textBox.setTooltip ("Bols separated by commas  -  Bol[duration] sets length in beats, Bol{+3} sets emphasis in dB, - is a rest.");
     textBox.onTextChange = [this] { textDirty = true; };
-    textBox.onReturnKey = [this] { applyText(); };
+    textBox.onFocusLost = [this] { if (textDirty) applyText(); };
     errorLabel.setColour (Label::textColourId, Palette::error);
     nameBox.setTextToShowWhenEmpty ("Taal name", Palette::dim);
     nameBox.onTextChange = [this]
@@ -368,7 +375,7 @@ void TablaEditor::refreshAll()
 void TablaEditor::refreshText (bool force)
 {
     if (textDirty && ! force) return;
-    textBox.setText ("Tabla: " + working().toText(), false);
+    textBox.setText (working().toText(), false);
     textDirty = false;
 }
 
@@ -432,9 +439,9 @@ void TablaEditor::applyText()
     errorLabel.setText ({}, juce::dontSendNotification);
     working().events = std::move (parsed);
     selectedBol = -1;
-    textDirty = false;
+    textDirty = true;     // keep the text exactly as typed (line breaks, spacing) while the UI refreshes
     commit();
-    refreshText (true);
+    textDirty = false;
 }
 
 void TablaEditor::newTaal()
@@ -608,7 +615,7 @@ void TablaEditor::resized()
 
     // centre column
     auto centre = r.reduced (8, 4);
-    auto bottom = centre.removeFromBottom (96);
+    auto bottom = centre.removeFromBottom (150);
     {
         auto nameRow = bottom.removeFromBottom (30);
         applyButton.setBounds (nameRow.removeFromRight (90));
@@ -619,7 +626,7 @@ void TablaEditor::resized()
         nameRow.removeFromLeft (10);
         errorLabel.setBounds (nameRow);
         bottom.removeFromBottom (6);
-        textTitle.setBounds (bottom.removeFromTop (0));
+        textTitle.setBounds (bottom.removeFromTop (20));
         textBox.setBounds (bottom);
     }
     centre.removeFromBottom (6);

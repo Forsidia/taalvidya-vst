@@ -94,7 +94,7 @@ private:
     juce::Viewport viewport;
     BolPalette palette;
     juce::TextButton deleteButton { "Delete" }, dupButton { "Duplicate" }, leftButton { "< Move" }, rightButton { "Move >" };
-    juce::Label textTitle { {}, "Tabla:" };
+    juce::Label textTitle { {}, "Bols separated by commas   |   Bol[1/4] or Bol[0.25] = duration in beats   |   Bol{+3} = emphasis in dB   |   - = rest   |   Enter = new line, line breaks are kept   |   Apply (or click away) to update" };
     juce::TextEditor textBox;
     juce::Label errorLabel;
     juce::TextEditor nameBox;

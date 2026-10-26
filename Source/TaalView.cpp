@@ -65,7 +65,7 @@ void TaalView::paint (juce::Graphics& g)
         {
             const float x = (float) marginX + (float) b * pxPerBeat();
             g.drawVerticalLine ((int) x, yRule - 6.0f, yRule + 2.0f);
-            if (b < beatsHere || b == beatsHere)
+            if (b < beatsHere)   // the closing tick of a row is not a beat of its own
                 g.drawText (juce::String (r * beatsPerRow + b + 1), (int) x - 14, (int) yRule - 22, 28, 14, juce::Justification::centred);
         }
     }
@@ -95,10 +95,13 @@ void TaalView::paint (juce::Graphics& g)
             g.drawRoundedRectangle (box, 3.0f, isSel ? 2.0f : 1.0f);
 
             g.setColour (isPlaying ? juce::Colours::black : (isRest ? Palette::dim : Palette::text));
-            g.setFont (juce::FontOptions (17.0f));
             auto label = isRest ? juce::String ("-") : e.bol;
             if (e.emphasisDb > 0.1f) label << " " << juce::String::repeatedString ("+", std::max (1, (int) (e.emphasisDb / 3.0f)));
-            g.drawText (label, box.toNearestInt(), juce::Justification::centred, true);
+
+            // short bols (e.g. Ti[0.25]) get a smaller font so the name still fits its box
+            const float fontSize = juce::jlimit (10.0f, 17.0f, box.getWidth() * 0.5f);
+            g.setFont (juce::FontOptions (fontSize));
+            g.drawFittedText (label, box.toNearestInt().reduced (1, 0), juce::Justification::centred, 1, 0.7f);
         }
     }
 

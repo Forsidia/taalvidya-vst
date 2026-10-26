@@ -25,11 +25,11 @@ Dha, Dhin, Dhin, Dha, Dha, Tin[0.5], Tin[0.5], -, Ge{+3}
 | Part | Meaning |
 |---|---|
 | `,` | separates bols (spaces and `|` also work) |
-| `Name[d]` | duration in beats, as a decimal or fraction: `Dha[0.25]` or `Dha[1/4]` (default 1) |
+| `Name[d]` | duration in beats, written as a fraction: `Dha[1/4]`, `Ki[1/3]`, `Dha[3/2]` (default 1). A decimal such as `[0.25]` is accepted and converted to a fraction |
 | `Name{+3}` | emphasis in dB, from -24 to +12 |
 | `-` or `Rest` | a silent beat |
 
-Durations go down to 1/16 of a beat (0.0625) and up to 64 beats. Press Enter or **Apply** to update the taal. The beginning `Tabla:` label is optional.
+Durations go down to 1/16 of a beat (0.0625) and up to 64 beats. The box is multi-line: Enter starts a new line, so you can lay a long composition out by hand. Click **Apply** (or click away) to update the taal; your line breaks are kept. An optional leading `Tabla:` is still accepted.
 
 ## Keyboard
 
@@ -78,7 +78,9 @@ Samples/     tabla recordings, embedded into the plugin at build time
 libs/JUCE/   fetched by build.bat, not committed
 ```
 
-## Credits and licence
+## Licence and credits
+
+Copyright (c) 2026 [Forsidia](https://forsidia.in) and Shreyak Chakraborty. All rights reserved. See [LICENSE](LICENSE).
 
 - Tabla samples by [mmiron](https://freesound.org/people/mmiron/packs/8162/) from Freesound, released under CC0.
-- Built with [JUCE](https://juce.com). JUCE is licensed separately (AGPLv3 or a commercial licence), which applies to anything you distribute built with it.
+- Built with [JUCE](https://juce.com), which is licensed separately (AGPLv3 or a commercial licence). That applies to anyone distributing a build.
