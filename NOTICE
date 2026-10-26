@@ -1,0 +1,14 @@
+Taal Vidya - https://forsidia.in
+Copyright (c) 2026 Forsidia and Shreyak Chakraborty
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version. It is distributed WITHOUT ANY WARRANTY; see the LICENSE file.
+
+Third-party components
+----------------------
+- JUCE (https://juce.com), Raw Material Software, AGPLv3 / commercial.
+  Fetched at build time; not part of this repository.
+- Tabla samples in Samples/ by mmiron (Freesound), Creative Commons 0.
+  See Samples/LICENSE_mmiron_freesound.txt.

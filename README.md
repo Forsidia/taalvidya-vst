@@ -80,7 +80,9 @@ libs/JUCE/   fetched by build.bat, not committed
 
 ## Licence and credits
 
-Copyright (c) 2026 [Forsidia](https://forsidia.in) and Shreyak Chakraborty. All rights reserved. See [LICENSE](LICENSE).
+Copyright (c) 2026 [Forsidia](https://forsidia.in) and Shreyak Chakraborty.
+
+Taal Vidya is free software released under the [GNU Affero General Public License v3.0](LICENSE) (AGPLv3). See [NOTICE](NOTICE) for third-party components.
 
 - Tabla samples by [mmiron](https://freesound.org/people/mmiron/packs/8162/) from Freesound, released under CC0.
-- Built with [JUCE](https://juce.com), which is licensed separately (AGPLv3 or a commercial licence). That applies to anyone distributing a build.
+- Built with [JUCE](https://juce.com), which is available under AGPLv3 as well.
