@@ -5,6 +5,9 @@ dist/
 # JUCE is fetched by build.bat (git clone --branch 8.0.8)
 libs/JUCE/
 
+# machine-specific build settings (e.g. set "TABLA_VST_DIR=D:\VST")
+build.local.bat
+
 # IDE / OS
 .vs/
 .vscode/

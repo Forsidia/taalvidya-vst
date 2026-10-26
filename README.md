@@ -63,7 +63,7 @@ The script clones JUCE 8.0.8 into `libs/JUCE` on first run. Output goes to `dist
 - `Taal Vidya.exe` – standalone app
 - `VST3\Taal Vidya.vst3` – plugin
 
-If the folder `D:\softwares\VST` exists, the plugin is also copied there. Set `TABLA_VST_DIR` to use a different folder. Close your DAW first, or the copy fails.
+To also copy the plugin into a VST folder after each build, set `TABLA_VST_DIR`, or create a `build.local.bat` (git-ignored) containing e.g. `set "TABLA_VST_DIR=D:\VST"`. Close your DAW first, or the copy fails.
 
 ## Files
 

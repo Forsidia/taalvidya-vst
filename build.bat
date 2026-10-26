@@ -64,8 +64,8 @@ set ART=%BUILD_DIR%\TablaVST_artefacts\%CONFIG%
 if exist "%ART%\Standalone\Taal Vidya.exe" copy /y "%ART%\Standalone\Taal Vidya.exe" dist\ >nul
 if exist "%ART%\VST3\Taal Vidya.vst3" xcopy /e /i /y "%ART%\VST3\Taal Vidya.vst3" "dist\VST3\Taal Vidya.vst3\" >nul
 
-REM Always refresh the plugin in the user's VST folder when it exists (override with set TABLA_VST_DIR=...)
-if not defined TABLA_VST_DIR set "TABLA_VST_DIR=D:\softwares\VST"
+REM Optionally copy the plugin to a VST folder: set TABLA_VST_DIR, or put it in build.local.bat (git-ignored)
+if not defined TABLA_VST_DIR if exist "%~dp0build.local.bat" call "%~dp0build.local.bat"
 if exist "%TABLA_VST_DIR%\" (
     set "DEST=%TABLA_VST_DIR%\TablaVST"
     if not exist "!DEST!" mkdir "!DEST!"
